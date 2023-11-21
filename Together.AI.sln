@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Together.AI", "Together.AI\Together.AI.csproj", "{12780FE3-CE4C-4B88-854F-642F093E2E66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Together.AI.SemanticKernel", "Together.AI.SemanticKernel\Together.AI.SemanticKernel.csproj", "{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12780FE3-CE4C-4B88-854F-642F093E2E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12780FE3-CE4C-4B88-854F-642F093E2E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12780FE3-CE4C-4B88-854F-642F093E2E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12780FE3-CE4C-4B88-854F-642F093E2E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
