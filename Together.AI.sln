@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Together.AI", "Together.AI\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Together.AI.SemanticKernel", "Together.AI.SemanticKernel\Together.AI.SemanticKernel.csproj", "{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{65724BF4-3060-48E1-B4ED-67D9E1486BD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "Examples\App\App.csproj", "{0C427486-682C-4B33-9F85-A301A8A51623}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,12 @@ Global
 		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EAD8739-C5BE-4EC6-9B03-408332E3FD96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C427486-682C-4B33-9F85-A301A8A51623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C427486-682C-4B33-9F85-A301A8A51623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C427486-682C-4B33-9F85-A301A8A51623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C427486-682C-4B33-9F85-A301A8A51623}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0C427486-682C-4B33-9F85-A301A8A51623} = {65724BF4-3060-48E1-B4ED-67D9E1486BD4}
 	EndGlobalSection
 EndGlobal
