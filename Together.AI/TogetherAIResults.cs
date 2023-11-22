@@ -2,69 +2,69 @@ using System.Text.Json.Serialization;
 
 namespace Together.AI
 {
-    public record TogetherAIResult
+    public class TogetherAIResult
     {
         [JsonPropertyName("status")]
-        public string? Status { get; set; }
+        public string Status { get; set; }
 
         [JsonPropertyName("prompt")]
-        public string[]? Prompt { get; set; }
+        public string[] Prompt { get; set; }
 
         [JsonPropertyName("model")]
-        public string? Model { get; set; }
+        public string Model { get; set; }
 
         [JsonPropertyName("model_owner")]
-        public string? ModelOwner { get; set; }
+        public string ModelOwner { get; set; }
 
         [JsonPropertyName("tags")]
-        public object? Tags { get; set; }
+        public object Tags { get; set; }
 
         [JsonPropertyName("num_returns")]
-        public long? NumReturns { get; set; }
+        public long NumReturns { get; set; }
 
         [JsonPropertyName("args")]
-        public TogetherAIArgs? Args { get; set; }
+        public TogetherAIArgs Args { get; set; }
 
         [JsonPropertyName("subjobs")]
-        public object[]? Subjobs { get; set; }
+        public object[] Subjobs { get; set; }
 
         [JsonPropertyName("output")]
-        public TogetherAIOutput? Output { get; set; }
+        public TogetherAIOutput Output { get; set; }
     }
 
-    public record TogetherAIStreamResult
+    public class TogetherAIStreamResult
     {
         [JsonPropertyName("id")]
-        public string? Id { get; set; }
+        public string Id { get; set; }
 
         [JsonPropertyName("choices")]
-        public TogetherAIChoice[]? Choices { get; set; }
+        public TogetherAIChoice[] Choices { get; set; }
 
         [JsonPropertyName("result_type")]
-        public string? ResultType { get; set; }
+        public string ResultType { get; set; }
     }
 
-    public record TogetherAIOutput
+    public class TogetherAIOutput
     {
         [JsonPropertyName("choices")]
-        public TogetherAIChoice[]? Choices { get; set; }
+        public TogetherAIChoice[] Choices { get; set; }
 
         [JsonPropertyName("raw_compute_time")]
-        public double? RawComputeTime { get; set; }
+        public double RawComputeTime { get; set; }
 
         [JsonPropertyName("result_type")]
-        public string? ResultType { get; set; }
+        public string ResultType { get; set; }
     }
 
-    public record TogetherAIChoice
+    public class TogetherAIChoice
     {
         [JsonPropertyName("text")]
-        public string? Text { get; set; }
+        public string Text { get; set; }
 
         [JsonPropertyName("index")]
-        public long? Index { get; set; }
+        public long Index { get; set; }
 
         [JsonPropertyName("finish_reason")]
-        public string? FinishReason { get; set; }
+        public string FinishReason { get; set; }
     }
 }

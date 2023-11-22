@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup Label="Package/Assembly Manifest Properties">
+        <Authors>Kalleby Santos</Authors>
+        <Company>kallebysantos</Company>
+        <Product>$(MSBuildProjectName)</Product>
+        <PackageId>$(MSBuildProjectName)</PackageId>
+
+        <PackageProjectUrl>https://github.com/kallebysantos/dotnet-together.ai</PackageProjectUrl>
+        <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
+        <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+
+    <PropertyGroup Label="Package/Local Nuget Sources">
+        <NupkgsDirectory>$(MSBuildThisFileDirectory)nupkgs</NupkgsDirectory>
+        <RestoreAdditionalProjectSources>$(NupkgsDirectory)</RestoreAdditionalProjectSources>
+        <PackageOutputPath>$(NupkgsDirectory)</PackageOutputPath>
+    </PropertyGroup>
+</Project>

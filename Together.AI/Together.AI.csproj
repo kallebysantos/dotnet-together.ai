@@ -1,9 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <IsPackable>true</IsPackable>
+
+    <Title>Together.AI</Title>
+    <Version>1.0.0</Version>
+    <PackageTags>AI;Artificial;Intelligence;SDK;TogetherAI</PackageTags>
+    <Description>A unofficial .NET client for Together's API platform, providing a convenient way for interacting with the Together APIs and enables easy integration of the inference API with your applications.</Description>    
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Label="Package Files">
+    <None Include="./README.md" pack="true" PackagePath="." Visible="false" />
+  </ItemGroup>
+
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+      <ItemGroup>
+          <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" TargetPath="%(ReferenceCopyLocalPaths.DestinationSubPath)" />
+      </ItemGroup>
+  </Target>
+  <Target Name="AddBuildDependencyFileToBuiltProjectOutputGroupOutput" BeforeTargets="BuiltProjectOutputGroup" Condition="'$(GenerateDependencyFile)' == 'true'">
+      <ItemGroup>
+          <BuiltProjectOutputGroupOutput Include="$(ProjectDepsFilePath)" TargetPath="$(ProjectDepsFileName)" FinalOutputPath="$(ProjectDepsFilePath)" />
+      </ItemGroup>
+  </Target>
 </Project>
