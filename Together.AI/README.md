@@ -9,7 +9,7 @@
 
 [![Nuget](https://img.shields.io/nuget/v/Together.AI)](https://www.nuget.org/packages/Together.AI)
 [![Nuget](https://img.shields.io/nuget/dt/Together.AI)](https://www.nuget.org/packages/Together.AI)
-[![Nuget](https://img.shields.io/nuget/l/Together.AI)](https://www.nuget.org/packages/Together.AI)
+![GitHub License](https://img.shields.io/github/license/kallebysantos/dotnet-together.ai)
 </div>
 
 #### A unofficial .NET client for [Together's API platform](https://www.together.ai/).
