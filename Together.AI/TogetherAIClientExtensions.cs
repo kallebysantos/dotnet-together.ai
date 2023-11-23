@@ -4,10 +4,15 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
+
+#if NET462
+using Newtonsoft.Json;
+#else
+using System.Text.Json;
+#endif
 
 namespace Together.AI
 {
@@ -37,13 +42,11 @@ namespace Together.AI
                         if (eventData == null || eventData == "[DONE]")
                             break;
 
-                        var result = JsonSerializer.Deserialize<T>(
-                            json: eventData,
-                            options: new JsonSerializerOptions()
-                            {
-                                PropertyNameCaseInsensitive = true
-                            }
-                        );
+#if NET462
+                        var result = JsonConvert.DeserializeObject<T>(eventData);
+#else
+                        var result = JsonSerializer.Deserialize<T>(eventData);
+#endif
 
                         if (result != null)
                             yield return result;
@@ -96,8 +99,14 @@ namespace Together.AI
             CancellationToken cancellationToken = default
         )
         {
+#if NET462
+            var jsonContent = JsonConvert.SerializeObject(value);
+#else
+            var jsonContent = JsonSerializer.Serialize(value);
+#endif
+
             var requestContent = new StringContent(
-                content: JsonSerializer.Serialize(value),
+                content: jsonContent,
                 encoding: Encoding.UTF8,
                 mediaType: "application/json"
             );
@@ -122,6 +131,12 @@ namespace Together.AI
             CancellationToken cancellationToken = default
         )
         {
+#if NET462
+            var jsonContent = await content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<T>(jsonContent);
+#else
+
             using (var jsonStream = await content.ReadAsStreamAsync())
             {
                 return await JsonSerializer.DeserializeAsync<T>(
@@ -129,6 +144,7 @@ namespace Together.AI
                     cancellationToken: cancellationToken
                 );
             }
+#endif
         }
     }
 }

@@ -1,25 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <IsPackable>true</IsPackable>
 
     <Title>Together.AI</Title>
-    <Version>1.0.0.1</Version>
+  
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>AI;Artificial;Intelligence;SDK;TogetherAI</PackageTags>
     <Description>A unofficial .NET client for Together's API platform, providing a convenient way for interacting with the Together APIs and enables easy integration of the inference API with your applications.</Description>    
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0" PrivateAssets="all" />
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.1'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup Label="Package Files">
-    <None Include="../Assets/together.png" Pack="true" PackagePath="./icon.png"/>
-    <None Include="./README.md" pack="true" PackagePath="." Visible="false" />
+    <None Include="../Assets/together-lg.png" Pack="true" PackagePath="./icon.png" />
+    <None Include="./NUGET.md" pack="true" PackagePath="." Visible="false" />
   </ItemGroup>
 
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">

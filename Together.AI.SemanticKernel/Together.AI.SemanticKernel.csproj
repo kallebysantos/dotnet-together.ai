@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Together.AI\Together.AI.csproj" />
+    <None Include="./NUGET.md" pack="true" PackagePath="." Visible="false" />
   </ItemGroup>
 </Project>

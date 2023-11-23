@@ -1,5 +1,7 @@
 <Project>
     <PropertyGroup Label="Package/Assembly Manifest Properties">
+        <Version>1.0.1</Version>
+
         <Authors>Kalleby Santos</Authors>
         <Company>kallebysantos</Company>
         <Product>$(MSBuildProjectName)</Product>
@@ -10,10 +12,9 @@
         <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
 
-        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageReadmeFile>NUGET.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
-
 
     <PropertyGroup Label="Package/Local Nuget Sources">
         <NupkgsDirectory>$(MSBuildThisFileDirectory)nupkgs</NupkgsDirectory>

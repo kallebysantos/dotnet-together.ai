@@ -1,3 +1,75 @@
+#if NET462
+using Newtonsoft.Json;
+
+namespace Together.AI
+{
+    public class TogetherAIResult
+    {
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("prompt")]
+        public string[] Prompt { get; set; }
+
+        [JsonProperty("model")]
+        public string Model { get; set; }
+
+        [JsonProperty("model_owner")]
+        public string ModelOwner { get; set; }
+
+        [JsonProperty("tags")]
+        public object Tags { get; set; }
+
+        [JsonProperty("num_returns")]
+        public long NumReturns { get; set; }
+
+        [JsonProperty("args")]
+        public TogetherAIArgs Args { get; set; }
+
+        [JsonProperty("subjobs")]
+        public object[] Subjobs { get; set; }
+
+        [JsonProperty("output")]
+        public TogetherAIOutput Output { get; set; }
+    }
+
+    public class TogetherAIStreamResult
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("choices")]
+        public TogetherAIChoice[] Choices { get; set; }
+
+        [JsonProperty("result_type")]
+        public string ResultType { get; set; }
+    }
+
+    public class TogetherAIOutput
+    {
+        [JsonProperty("choices")]
+        public TogetherAIChoice[] Choices { get; set; }
+
+        [JsonProperty("raw_compute_time")]
+        public double RawComputeTime { get; set; }
+
+        [JsonProperty("result_type")]
+        public string ResultType { get; set; }
+    }
+
+    public class TogetherAIChoice
+    {
+        [JsonProperty("text")]
+        public string Text { get; set; }
+
+        [JsonProperty("index")]
+        public long Index { get; set; }
+
+        [JsonProperty("finish_reason")]
+        public string FinishReason { get; set; }
+    }
+}
+#else
 using System.Text.Json.Serialization;
 
 namespace Together.AI
@@ -68,3 +140,4 @@ namespace Together.AI
         public string FinishReason { get; set; }
     }
 }
+#endif
