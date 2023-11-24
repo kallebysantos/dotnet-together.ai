@@ -1,11 +1,13 @@
+using System;
+using System.Net.Http;
 using System.Text.Json;
-using Azure.Core.Extensions;
-using Microsoft.Extensions.Azure;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Http;
 using Microsoft.SemanticKernel.AI;
 using Microsoft.SemanticKernel.AI.TextCompletion;
-using Microsoft.SemanticKernel.Http;
 
 namespace Together.AI.SemanticKernel;
 

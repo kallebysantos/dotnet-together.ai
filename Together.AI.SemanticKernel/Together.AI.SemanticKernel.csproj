@@ -1,17 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+
+    <Title>Together.AI.SemanticKernel</Title>
+    <PackageTags>AI;Artificial;Intelligence;SDK;TogetherAI;Semantic Kernel</PackageTags>
+    <Description>A unofficial .NET Semantic Kernel integration for Together's API platform, providing a convenient way for interacting with the Together APIs and enables easy integration of the inference API with your applications.</Description>    
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.0-beta8" />
+    <ProjectReference Include="..\Together.AI\Together.AI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Together.AI\Together.AI.csproj" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.0-beta8" PrivateAssets="all" ExcludeAssets="Runtime" />
+  </ItemGroup>
+  
+  <ItemGroup Label="Package Files">
     <None Include="./NUGET.md" pack="true" PackagePath="." Visible="false" />
   </ItemGroup>
 </Project>

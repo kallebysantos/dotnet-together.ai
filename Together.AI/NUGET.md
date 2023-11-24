@@ -1,4 +1,4 @@
-[![Together Homepage](./icon.png)](https://www.together.ai)
+[![Together Homepage](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Assets/together.png?raw=true)](https://www.together.ai)
 
 #### A unofficial .NET client for [Together's API platform](https://www.together.ai/).
 

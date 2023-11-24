@@ -1,6 +1,11 @@
 <Project>
+    <PropertyGroup Label="Compiler properties">
+        <LangVersion>default</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
     <PropertyGroup Label="Package/Assembly Manifest Properties">
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
 
         <Authors>Kalleby Santos</Authors>
         <Company>kallebysantos</Company>

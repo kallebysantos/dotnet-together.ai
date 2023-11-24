@@ -1,23 +1,18 @@
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+
 using Microsoft.SemanticKernel.AI;
 using Microsoft.SemanticKernel.AI.TextCompletion;
 
 namespace Together.AI.SemanticKernel;
 
-public class TogetherAIService : ITextCompletion
+public class TogetherAIService(string ModelId, TogetherAIClient TogetherAI) : ITextCompletion
 {
-    private readonly TogetherAIClient _togetherAI;
-    private readonly string _modelId;
-
     public IReadOnlyDictionary<string, string> Attributes => new Dictionary<string, string>();
 
-    public TogetherAIService(string modelId, TogetherAIClient togetherAI)
-    {
-        _togetherAI = togetherAI;
-        _modelId = modelId;
-    }
-
-    public AIRequestSettings GetDefaultRequestSettings() => CreateDefaultRequestSettings(_modelId);
+    public AIRequestSettings GetDefaultRequestSettings() => CreateDefaultRequestSettings(ModelId);
 
     public static AIRequestSettings CreateDefaultRequestSettings(string modelId) =>
         new()
@@ -41,7 +36,7 @@ public class TogetherAIService : ITextCompletion
             StreamTokens = false
         };
 
-        var response = await _togetherAI.GetCompletionResponseAsync(requestArgs, cancellationToken);
+        var response = await TogetherAI.GetCompletionResponseAsync(requestArgs, cancellationToken);
 
         var completion = new TogetherAICompletion(response);
 
@@ -64,7 +59,7 @@ public class TogetherAIService : ITextCompletion
             StreamTokens = true
         };
 
-        var response = await _togetherAI.GetCompletionResponseAsync(requestArgs, cancellationToken);
+        var response = await TogetherAI.GetCompletionResponseAsync(requestArgs, cancellationToken);
 
         var completion = new TogetherAICompletion(response);
 
