@@ -1,0 +1,17 @@
+name: GetHistory
+description: Generates a history
+template: |
+  <message role="system">Instructions: Generate a simple history about a specific topic: 
+  Topic: {{topic}}.</message>
+
+  <message role="system">History:</message>
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic to generate a history
+    is_required: true
+execution_settings:
+  default:
+    model_id: "togethercomputer/llama-2-7b"
+    max_tokens: 128
+    temperature: 0.7

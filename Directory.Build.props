@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Package/Assembly Manifest Properties">
-        <Version>1.0.2</Version>
+        <Version>1.1.0</Version>
 
         <Authors>Kalleby Santos</Authors>
         <Company>kallebysantos</Company>

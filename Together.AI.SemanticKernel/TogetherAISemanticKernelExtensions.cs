@@ -1,83 +1,79 @@
 using System;
 using System.Net.Http;
 using System.Text.Json;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Http;
-using Microsoft.SemanticKernel.AI;
-using Microsoft.SemanticKernel.AI.TextCompletion;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Together.AI.SemanticKernel;
 
 public static class TogetherAISemanticKernelExtensions
 {
-    public static KernelBuilder WithTogetherAIService(
-        this KernelBuilder builder,
-        string modelId,
-        string apiKey,
-        string? serviceId = null,
-        bool setAsDefault = false,
-        HttpClient? httpClient = null
+    public static IKernelBuilder AddTogetherAITextGeneration(
+        this IKernelBuilder builder,
+        string? modelId = null,
+        TogetherAIClient? togetherAIClient = null,
+        string? serviceId = null
     )
     {
-        serviceId ??= nameof(TogetherAIService);
+        serviceId ??= nameof(TogetherAITextGenerationService);
 
-        builder.WithAIService(
-            serviceId,
-            (Func<ILoggerFactory, IDelegatingHandlerFactory, ITextCompletion>)(
-                (ILoggerFactory loggerFactory, IDelegatingHandlerFactory httpHandlerFactory) =>
-                {
-                    if (httpClient is null)
-                    {
-                        var delegatingHandler = httpHandlerFactory.Create(loggerFactory);
-                        delegatingHandler.InnerHandler = new HttpClientHandler();
+        builder.Services.AddKeyedSingleton<ITextGenerationService, TogetherAITextGenerationService>(
+            serviceKey: nameof(TogetherAITextGenerationService),
+            implementationFactory: (services, _) =>
+            {
+                togetherAIClient ??= services.GetRequiredService<TogetherAIClient>();
+                return new TogetherAITextGenerationService(
+                    TogetherAI: togetherAIClient,
+                    ModelId: modelId
+                );
+            });
 
-                        httpClient = new HttpClient(
-                            handler: delegatingHandler,
-                            disposeHandler: false
-                        );
-                    }
-
-                    httpClient.SetupClient(apiKey);
-
-                    return new TogetherAIService(modelId, new TogetherAIClient(httpClient));
-                }
-            ),
-            setAsDefault
-        );
         return builder;
     }
 
-    public static AIRequestSettings ToRequestSettings(this TogetherAIRequestArgs requestArgs)
+    public static IKernelBuilder AddTogetherAITextGeneration(
+        this IKernelBuilder builder,
+        string apiKey,
+        string? modelId = null,
+        string? serviceId = null
+    )
     {
-        var extensionDataJson = JsonSerializer.Serialize(requestArgs);
+        builder.Services.AddHttpClient<TogetherAIClient>(c => c.SetupClient(apiKey));
 
-        var extensionData =
-            JsonSerializer.Deserialize<Dictionary<string, object>>(extensionDataJson)
-            ?? throw new ArgumentException(
-                message: $"Cannot convert to {nameof(AIRequestSettings)}",
-                paramName: nameof(requestArgs)
-            );
-
-        return new AIRequestSettings { ModelId = requestArgs.Model, ExtensionData = extensionData };
+        return builder.AddTogetherAITextGeneration(
+            modelId: modelId,
+            serviceId: serviceId
+        );
     }
 
-    public static TogetherAIRequestArgs ToTogetherArgs(this AIRequestSettings requestSettings)
+    public static IKernelBuilder AddTogetherAITextGeneration(
+        this IKernelBuilder builder,
+        HttpClient httpClient,
+        string? modelId = null,
+        string? serviceId = null
+    )
+        => builder.AddTogetherAITextGeneration(
+            modelId: modelId,
+            togetherAIClient: new TogetherAIClient(httpClient),
+            serviceId: serviceId
+        );
+
+    public static TogetherAIRequestArgs ToTogetherArgs(this PromptExecutionSettings promptSettings)
     {
-        var extensionDataJson = JsonSerializer.Serialize(requestSettings.ExtensionData);
+        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        var extensionDataJson = JsonSerializer.Serialize(promptSettings, options: jsonOptions);
 
         var togetherAIArgs =
-            JsonSerializer.Deserialize<TogetherAIRequestArgs>(extensionDataJson)
+            JsonSerializer.Deserialize<TogetherAIRequestArgs>(extensionDataJson, options: jsonOptions)
             ?? throw new ArgumentException(
                 message: $"Cannot convert to {nameof(TogetherAIRequestArgs)}",
-                paramName: nameof(requestSettings)
+                paramName: nameof(PromptExecutionSettings)
             );
 
         return togetherAIArgs with
         {
-            Model = requestSettings.ModelId
+            Model = promptSettings.ModelId
         };
     }
 }
