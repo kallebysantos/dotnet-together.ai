@@ -27,7 +27,8 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        var streamRequestArgs = requestArgs with {
+        var streamRequestArgs = requestArgs with
+        {
             StreamTokens = true
         };
 
@@ -47,7 +48,8 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         CancellationToken cancellationToken = default
     )
     {
-        var streamRequestArgs = requestArgs with {
+        var streamRequestArgs = requestArgs with
+        {
             StreamTokens = false
         };
 
@@ -58,6 +60,22 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<TogetherAIResult>(cancellationToken);
+    }
+
+    public async Task<TogetherAIEmbeddingsResult?> GetEmbeddingsAsync(
+        TogetherAIEmbeddingsRequestArgs requestArgs,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await _httpClient.PostAsJsonAsync(
+            requestUri: "/v1/embeddings",
+            value: requestArgs,
+            cancellationToken
+        );
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<TogetherAIEmbeddingsResult>(cancellationToken);
     }
 
     public void Dispose() => _httpClient?.Dispose();

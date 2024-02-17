@@ -11,10 +11,14 @@
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.4.0" />
     <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.4.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.4.0" />
-    <PackageReference Include="Together.AI.SemanticKernel" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="./Prompts/**/*.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Together.AI.SemanticKernel\Together.AI.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\Together.AI\Together.AI.csproj" />
   </ItemGroup>
 </Project>

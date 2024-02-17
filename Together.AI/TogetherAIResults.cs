@@ -67,3 +67,28 @@ public record TogetherAIChoice
     [JsonPropertyName("finish_reason")]
     public string? FinishReason { get; set; }
 }
+
+
+public record TogetherAIEmbeddingsResult
+{
+    [JsonPropertyName("object")]
+    public string? Object { get; set; }
+
+    [JsonPropertyName("data")]
+    public TogetherAIEmbeddings[]? Data { get; set; }
+
+    [JsonPropertyName("model")]
+    public string? Model { get; set; }
+}
+
+public record TogetherAIEmbeddings
+{
+    [JsonPropertyName("object")]
+    public string? Object { get; set; }
+
+    [JsonPropertyName("embedding")]
+    public float[]? Values { get; set; }
+
+    [JsonPropertyName("index")]
+    public long? Index { get; set; }
+}

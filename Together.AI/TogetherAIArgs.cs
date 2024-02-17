@@ -31,3 +31,13 @@ public record TogetherAIRequestArgs : TogetherAIArgs
     [JsonPropertyName("stream_tokens")]
     public bool StreamTokens { get; set; } = false;
 }
+
+public record TogetherAIEmbeddingsRequestArgs
+{
+
+    [JsonPropertyName("model")]
+    public string? Model { get; set; }
+
+    [JsonPropertyName("input")]
+    public string? Input { get; set; }
+}
