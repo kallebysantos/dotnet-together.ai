@@ -1,15 +1,9 @@
-<p align="center">
-    <img src="https://github.com/kallebysantos/dotnet-together.ai/blob/master/Assets/together.svg" width="200" />
-</p>
-
-<div align="center">
+[![Together Homepage](https://raw.githubusercontent.com/kallebysantos/dotnet-together.ai/master/Assets/together.svg)](https://www.together.ai)
 
 [![Together Homepage](https://img.shields.io/badge/web-together.ai-blue?style=flat&label=https&colorB=0F6FFF)](https://www.together.ai)
-
 [![Nuget](https://img.shields.io/nuget/v/Together.AI)](https://www.nuget.org/packages/Together.AI)
 [![Nuget](https://img.shields.io/nuget/dt/Together.AI)](https://www.nuget.org/packages/Together.AI)
 ![GitHub License](https://img.shields.io/github/license/kallebysantos/dotnet-together.ai)
-</div>
 
 #### A unofficial .NET client for [Together's API platform](https://www.together.ai/).
 
