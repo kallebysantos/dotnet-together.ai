@@ -1,4 +1,15 @@
-[![Together Homepage](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Assets/together.png?raw=true)](https://www.together.ai)
+<p align="center">
+    <img src="https://github.com/kallebysantos/dotnet-together.ai/blob/master/Assets/together.svg" width="200" />
+</p>
+
+<div align="center">
+
+[![Together Homepage](https://img.shields.io/badge/web-together.ai-blue?style=flat&label=https&colorB=0F6FFF)](https://www.together.ai)
+
+[![Nuget](https://img.shields.io/nuget/v/Together.AI)](https://www.nuget.org/packages/Together.AI)
+[![Nuget](https://img.shields.io/nuget/dt/Together.AI)](https://www.nuget.org/packages/Together.AI)
+![GitHub License](https://img.shields.io/github/license/kallebysantos/dotnet-together.ai)
+</div>
 
 #### A unofficial .NET client for [Together's API platform](https://www.together.ai/).
 
@@ -86,6 +97,32 @@ await foreach (var streamResult in togetherAI.GetCompletionStreamAsync(togetherA
 }
 ```
 
+### Getting embeddings
+
+To simply get text embedding results, you can use the [`GetEmbeddingsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L65) method.
+
+```cs Snippet:GettingEmbeddings
+using Together.AI;
+
+// ...
+
+// Setup Request Arguments
+var togetherAIArgs = new TogetherAIEmbeddingsRequestArgs()
+{
+    Model = MODEL_ID,
+    Input = "Our solar system orbits the Milky Way galaxy at about 515,000 mph"
+};
+
+// Getting result
+var result = await togetherAI.GetEmbeddingsAsync(togetherAIArgs);
+
+// Print generated embeddings
+foreach (var token in result?.Data?.First()?.Values ?? [])
+{
+    Console.Write(token);
+}
+```
+
 ## Examples
 
 ### Looking for Grammar errors
@@ -121,3 +158,5 @@ Console.WriteLine(result.Output.Choices[0].Text);
 
 // Result: 'Y'
 ```
+
+> More examples can be found in the [`Examples folder`](https://github.com/kallebysantos/dotnet-together.ai/tree/master/Examples)

@@ -98,6 +98,32 @@ await foreach (var streamResult in togetherAI.GetCompletionStreamAsync(togetherA
 }
 ```
 
+### Getting embeddings
+
+To simply get text embedding results, you can use the [`GetEmbeddingsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L65) method.
+
+```cs Snippet:GettingEmbeddings
+using Together.AI;
+
+// ...
+
+// Setup Request Arguments
+var togetherAIArgs = new TogetherAIEmbeddingsRequestArgs()
+{
+    Model = MODEL_ID,
+    Input = "Our solar system orbits the Milky Way galaxy at about 515,000 mph"
+};
+
+// Getting result
+var result = await togetherAI.GetEmbeddingsAsync(togetherAIArgs);
+
+// Print generated embeddings
+foreach (var token in result?.Data?.First()?.Values ?? [])
+{
+    Console.Write(token);
+}
+```
+
 ## Examples
 
 ### Looking for Grammar errors
@@ -133,3 +159,5 @@ Console.WriteLine(result.Output.Choices[0].Text);
 
 // Result: 'Y'
 ```
+
+> More examples can be found in the [`Examples folder`](https://github.com/kallebysantos/dotnet-together.ai/tree/master/Examples)
