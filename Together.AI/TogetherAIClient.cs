@@ -13,12 +13,22 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
     private readonly HttpClient _httpClient = httpClient;
 
     [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
-    public async Task<HttpResponseMessage> GetCompletionResponseAsync(
+    public async Task<HttpResponseMessage> GetInferenceResponseAsync(
         TogetherAIRequestArgs requestArgs,
         CancellationToken cancellationToken = default
     ) =>
         await _httpClient.PostAsJsonAsync(
             requestUri: "/inference",
+            value: requestArgs,
+            cancellationToken
+        );
+
+    public async Task<HttpResponseMessage> GetCompletionResponseAsync(
+        TogetherAIRequestArgs requestArgs,
+        CancellationToken cancellationToken = default
+    ) =>
+        await _httpClient.PostAsJsonAsync(
+            requestUri: "/v1/completions",
             value: requestArgs,
             cancellationToken
         );
@@ -34,12 +44,35 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
             StreamTokens = true
         };
 
-        using var response = await GetCompletionResponseAsync(
+        using var response = await GetInferenceResponseAsync(
             requestArgs: streamRequestArgs,
             cancellationToken
         );
 
         await foreach (var stream in response.ReadAsTogetherAIStreamAsync(cancellationToken))
+        {
+            yield return stream;
+        }
+    }
+
+    public async IAsyncEnumerable<TogetherAICompletionResult> GetCompletionsStreamAsync(
+        TogetherAIRequestArgs requestArgs,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        var streamRequestArgs = requestArgs with
+        {
+            Stream = true
+        };
+
+        using var response = await GetCompletionResponseAsync(
+            requestArgs: streamRequestArgs,
+            cancellationToken
+        );
+
+        response.EnsureSuccessStatusCode();
+
+        await foreach (var stream in response.ReadEventsAsync<TogetherAICompletionResult>(cancellationToken))
         {
             yield return stream;
         }
@@ -56,13 +89,36 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
             StreamTokens = false
         };
 
-        using var response = await GetCompletionResponseAsync(
+        using var response = await GetInferenceResponseAsync(
             requestArgs: streamRequestArgs,
             cancellationToken
         );
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<TogetherAIResult>(cancellationToken);
+    }
+
+    /// <summary>
+    /// Method for language, code, and image models on Together AI
+    /// </summary>
+    public async Task<TogetherAICompletionResult?> GetCompletionsAsync(
+        TogetherAIRequestArgs requestArgs,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var streamRequestArgs = requestArgs with
+        {
+            Stream = false
+        };
+
+        using var response = await GetCompletionResponseAsync(
+            requestArgs: streamRequestArgs,
+            cancellationToken
+        );
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<TogetherAICompletionResult>(cancellationToken);
     }
 
     public async Task<TogetherAIEmbeddingsResult?> GetEmbeddingsAsync(

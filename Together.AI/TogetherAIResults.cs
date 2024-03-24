@@ -75,6 +75,38 @@ public record TogetherAIChoice : TogetherAIChoiceItem
     public string? FinishReason { get; set; }
 }
 
+public record TogetherAIUsage
+{
+    [JsonPropertyName("prompt_tokens")]
+    public int? PromptTokens { get; set; }
+
+    [JsonPropertyName("completion_tokens")]
+    public int? CompletionTokens { get; set; }
+
+    [JsonPropertyName("total_tokens")]
+    public int? TotalTokens { get; set; }
+}
+
+public record TogetherAICompletionResult
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("created")]
+    public int? Created { get; set; }
+
+    [JsonPropertyName("model")]
+    public string? Model { get; set; }
+
+    [JsonPropertyName("object")]
+    public string? Object { get; set; }
+
+    [JsonPropertyName("choices")]
+    public TogetherAIChoiceItem[]? Choices { get; set; }
+
+    [JsonPropertyName("usage")]
+    public TogetherAIUsage? Usage { get; set; }
+}
 
 public record TogetherAIEmbeddingsResult
 {

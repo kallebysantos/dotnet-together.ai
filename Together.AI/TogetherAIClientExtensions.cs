@@ -46,6 +46,7 @@ public static class TogetherAIClientExtensions
     /// </summary>
     /// <param name="httpResponse"></param>
     /// <param name="cancellationToken"></param>
+    [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
     public static IAsyncEnumerable<TogetherAIStreamResult> ReadAsTogetherAIStreamAsync(
         this HttpResponseMessage httpResponse,
         CancellationToken cancellationToken = default

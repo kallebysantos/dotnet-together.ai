@@ -2,7 +2,8 @@ using Together.AI;
 
 public static class TogetherClientExample
 {
-    public static async Task RunTextCompletionExample(string apiKey, string modelId)
+    [Obsolete("Uses the old 'Inference' endpoint")]
+    public static async Task RunTextInferenceExample(string apiKey, string modelId)
     {
         var client = new HttpClient();
         client.SetupClient(apiKey);
@@ -33,6 +34,36 @@ public static class TogetherClientExample
         }
     }
 
+    public static async Task RunTextCompletionExample(string apiKey, string modelId)
+    {
+        var client = new HttpClient();
+        client.SetupClient(apiKey);
+
+        var togetherAI = new TogetherAIClient(client);
+
+        // Setup Request Arguments
+        var togetherAIArgs = new TogetherAIRequestArgs()
+        {
+            Model = modelId,
+            MaxTokens = 128,
+            Prompt = "Alan Turing was "
+        };
+
+        // Getting completion result
+        var result = await togetherAI.GetCompletionsAsync(togetherAIArgs);
+
+        // Print generated text
+        Console.WriteLine(result?.Choices?.First().Text);
+
+        // Getting completion as stream
+        await foreach (var streamResult in togetherAI.GetCompletionsStreamAsync(togetherAIArgs))
+        {
+            var token = streamResult?.Choices?.First().Text;
+
+            // Print generated token
+            Console.Write(token);
+        }
+    }
     public static async Task RunTextEmbeddingExample(string apiKey, string modelId)
     {
         var client = new HttpClient();
