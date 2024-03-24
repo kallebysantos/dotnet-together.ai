@@ -45,7 +45,8 @@ var togetherAI = new TogetherAIClient(client);
 
 ### Getting completion results
 
-To simply get text completion results, you can use the [`GetCompletionAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L53) method.
+To simply get text completion results, you can use the [`GetCompletionsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L104) method.
+
 
 ```cs Snippet:GettingCompletionResults
 using Together.AI;
@@ -60,15 +61,15 @@ var togetherAIArgs = new TogetherAIRequestArgs()
     Prompt = "Alan Turing was "
 };
 
-var result = await togetherAI.GetCompletionAsync(togetherAIArgs);
+var result = await togetherAI.GetCompletionsAsync(togetherAIArgs);
 
 // Print generated text
-Console.WriteLine(result.Output.Choices[0].Text);
+Console.WriteLine(result?.Choices?.First().Text);
 ```
 
 ### Streaming tokens
 
-To get tokens as the model generates, you can use the [`GetCompletionStreamAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L29) method.
+To get tokens as the model generates, you can use the [`GetCompletionsStreamAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L58) method.
 
 ```cs Snippet:StreamingTokens
 using Together.AI;
@@ -82,9 +83,9 @@ var togetherAIArgs = new TogetherAIRequestArgs()
     Prompt = "Alan Turing was "
 };
 
-await foreach (var streamResult in togetherAI.GetCompletionStreamAsync(togetherAIArgs))
+await foreach (var streamResult in togetherAI.GetCompletionsStreamAsync(togetherAIArgs))
 {
-    var token = streamResult.Choices[0].Text;
+    var token = streamResult.Choices.First().Text;
 
     // Print generated token
     Console.Write(token);
@@ -121,7 +122,7 @@ foreach (var token in result?.Data?.First()?.Values ?? [])
 
 ### Looking for Grammar errors
 
-```csharp
+```cs Snippet:GrammarErrorsExample
 using Together.AI;
 
 const string API_KEY = "your-api-key-from-together";
@@ -146,9 +147,9 @@ var togetherAIArgs = new TogetherAIRequestArgs()
     Prompt = promptInput
 };
 
-var result = await togetherAI.GetCompletionAsync(togetherAIArgs);
+var result = await togetherAI.GetCompletionsAsync(togetherAIArgs);
 
-Console.WriteLine(result.Output.Choices[0].Text);
+Console.WriteLine(result?.Choices?.First().Text);
 
 // Result: 'Y'
 ```
