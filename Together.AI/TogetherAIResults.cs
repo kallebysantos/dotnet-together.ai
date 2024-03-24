@@ -1,7 +1,9 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace Together.AI;
 
+[Obsolete("Represents the legacy 'inference' endpoint result, please use the newer implementation.")]
 public record TogetherAIResult
 {
     [JsonPropertyName("status")]
@@ -32,6 +34,7 @@ public record TogetherAIResult
     public TogetherAIOutput? Output { get; set; }
 }
 
+[Obsolete("Represents the legacy 'inference' endpoint result, please use the newer implementation.")]
 public record TogetherAIStreamResult
 {
     [JsonPropertyName("id")]
@@ -56,11 +59,15 @@ public record TogetherAIOutput
     public string? ResultType { get; set; }
 }
 
-public record TogetherAIChoice
+public record TogetherAIChoiceItem
 {
     [JsonPropertyName("text")]
     public string? Text { get; set; }
+}
 
+[Obsolete("Represents the legacy 'choice' result, please use the newer implementation.")]
+public record TogetherAIChoice : TogetherAIChoiceItem
+{
     [JsonPropertyName("index")]
     public long? Index { get; set; }
 

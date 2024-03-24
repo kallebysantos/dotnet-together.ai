@@ -12,6 +12,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
 {
     private readonly HttpClient _httpClient = httpClient;
 
+    [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
     public async Task<HttpResponseMessage> GetCompletionResponseAsync(
         TogetherAIRequestArgs requestArgs,
         CancellationToken cancellationToken = default
@@ -22,6 +23,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
             cancellationToken
         );
 
+    [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
     public async IAsyncEnumerable<TogetherAIStreamResult> GetCompletionStreamAsync(
         TogetherAIRequestArgs requestArgs,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
@@ -43,6 +45,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         }
     }
 
+    [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
     public async Task<TogetherAIResult?> GetCompletionAsync(
         TogetherAIRequestArgs requestArgs,
         CancellationToken cancellationToken = default
