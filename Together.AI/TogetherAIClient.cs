@@ -24,11 +24,21 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         );
 
     public async Task<HttpResponseMessage> GetCompletionResponseAsync(
-        TogetherAIRequestArgs requestArgs,
+        TogetherAICompletionArgs requestArgs,
         CancellationToken cancellationToken = default
     ) =>
         await _httpClient.PostAsJsonAsync(
             requestUri: "/v1/completions",
+            value: requestArgs,
+            cancellationToken
+        );
+
+    public async Task<HttpResponseMessage> GetChatCompletionResponseAsync(
+        TogetherAIChatCompletionArgs requestArgs,
+        CancellationToken cancellationToken = default
+    ) =>
+        await _httpClient.PostAsJsonAsync(
+            requestUri: "/v1/chat/completions",
             value: requestArgs,
             cancellationToken
         );
@@ -56,7 +66,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
     }
 
     public async IAsyncEnumerable<TogetherAICompletionResult> GetCompletionsStreamAsync(
-        TogetherAIRequestArgs requestArgs,
+        TogetherAICompletionArgs requestArgs,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
@@ -102,7 +112,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
     /// Method for language, code, and image models on Together AI
     /// </summary>
     public async Task<TogetherAICompletionResult?> GetCompletionsAsync(
-        TogetherAIRequestArgs requestArgs,
+        TogetherAICompletionArgs requestArgs,
         CancellationToken cancellationToken = default
     )
     {
