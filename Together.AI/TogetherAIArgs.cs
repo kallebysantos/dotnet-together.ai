@@ -1,21 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Together.AI;
 
-public record TogetherAIArgs
+public record TogetherAIModelArgs
 {
     /// <summary>
     /// The name of the model to query.
     /// </summary>
     [JsonPropertyName("model")]
     public string? Model { get; set; }
-
-    /// <summary>
-    /// A string providing context for the model to complete.
-    /// </summary>
-    [JsonPropertyName("prompt")]
-    public string? Prompt { get; set; }
 
     /// <summary>
     /// The maximum number of tokens to generate.
@@ -91,7 +86,7 @@ public record TogetherAIArgs
     public string? SafetyModel { get; set; }
 }
 
-public record TogetherAIRequestArgs : TogetherAIArgs
+public record TogetherAIStreamArgs : TogetherAIModelArgs
 {
     /// <summary>
     /// If true, stream tokens as Server-Sent Events as the model generates them instead of 
@@ -109,6 +104,176 @@ public record TogetherAIRequestArgs : TogetherAIArgs
     /// </summary>
     [JsonPropertyName("stream")]
     public bool Stream { get; set; } = false;
+}
+
+[Obsolete("Represents the legacy 'inference' endpoint request, please use the newer implementation.")]
+public record TogetherAIRequestArgs : TogetherAIStreamArgs
+{
+    /// <summary>
+    /// A string providing context for the model to complete.
+    /// </summary>
+    [JsonPropertyName("prompt")]
+    public string? Prompt { get; set; }
+}
+
+public record TogetherAICompletionArgs : TogetherAIStreamArgs
+{
+    /// <summary>
+    /// A string providing context for the model to complete.
+    /// </summary>
+    [JsonPropertyName("prompt")]
+    public string? Prompt { get; set; }
+}
+
+public record TogetherAIChatMessage
+{
+    /// <summary>
+    /// Represent the system role of the message
+    /// </summary>
+    public static string SystemRole = "system";
+
+    /// <summary>
+    /// Represent the user role of the message
+    /// </summary>
+    public static string UserRole = "user";
+
+    /// <summary>
+    /// Represent the assistant role of the message
+    /// </summary>
+    public static string AssistantRole = "assistant";
+
+    /// <summary>
+    /// The role of the messages author. Choice between: system, user, or assistant
+    /// </summary>
+    [JsonPropertyName("role")]
+    public string Role { get; set; } = UserRole;
+
+    /// <summary>
+    /// The contents of the message.
+    /// </summary>
+    [JsonPropertyName("content")]
+    public string? Content { get; set; }
+}
+
+public record TogetherAITool
+{
+    /// <summary>
+    /// The type of the tool. Currently, only function is supported.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; set; } = TogetherAIFunctionTool.TypeName;
+
+    /// <summary>
+    /// The function tool object descriptor.
+    /// </summary>
+    [JsonPropertyName("function")]
+    public TogetherAIFunctionTool? Function { get; set; }
+}
+
+public record TogetherAIFunctionTool
+{
+    public static string TypeName = "function";
+
+    /// <summary>
+    /// The name of the function to be called. Must be a-z, A-Z, 0-9,
+    /// or contain underscores and dashes, with a maximum length of 64.
+    /// </summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// A description of what the function does, used by the model to choose 
+    /// when and how to call the function.
+    /// </summary>
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// The parameters the functions accepts, described as a JSON Schema object.
+    /// </summary>
+    [JsonPropertyName("parameters")]
+    public IDictionary<string, dynamic>? Parameters { get; set; }
+}
+
+public interface ITogetherAIToolChoice;
+
+public record TogetherAIAutoToolChoice : ITogetherAIToolChoice
+{
+    public override string ToString() => "auto";
+}
+
+public record TogetherAIToolChoice : ITogetherAIToolChoice
+{
+    /// <summary>
+    /// The type of the tool. Currently, only function is supported.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; set; } = TogetherAIFunctionToolChoice.TypeName;
+
+    /// <summary>
+    /// The function tool object descriptor.
+    /// </summary>
+    [JsonPropertyName("function")]
+    public TogetherAIFunctionToolChoice? Function { get; set; }
+}
+
+public record TogetherAIFunctionToolChoice
+{
+    public static string TypeName = "function";
+
+    /// <summary>
+    /// The name of the function to be called. Must be a-z, A-Z, 0-9,
+    /// or contain underscores and dashes, with a maximum length of 64.
+    /// </summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+}
+
+public record TogetherAIResponseFormat
+{
+    /// <summary>
+    /// Type of response format. Currently only supports json_object.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; set; } = "json_object";
+
+    /// <summary>
+    /// A valid JSON schema. Can be used to force a specific response schema.
+    /// </summary>
+    [JsonPropertyName("schema")]
+    public IDictionary<string, object>? Schema { get; set; }
+}
+
+public record TogetherAIChatCompletionArgs : TogetherAIStreamArgs
+{
+    /// <summary>
+    /// A list of messages comprising the conversation so far.
+    /// </summary>
+    [JsonPropertyName("messages")]
+    public IEnumerable<TogetherAIChatMessage>? Messages { get; set; }
+
+    /// <summary>
+    /// A list of tools the model may call. Currently, only functions are supported as a tool.
+    /// Use this to provide a list of functions the model may generate JSON inputs for.
+    /// </summary>
+    [JsonPropertyName("tools")]
+    public IEnumerable<TogetherAITool>? Tools { get; set; } = new List<TogetherAITool>();
+
+    /// <summary>
+    /// Controls which (if any) function is called by the model. auto means the model can pick
+    /// between generating a message or calling a function. Specifying a particular function
+    /// via {"type": "function", "function": {"name": "my_function"}} forces the model to call 
+    /// that function. auto is the default.
+    /// </summary>
+    [JsonPropertyName("tool_choice")]
+    public ITogetherAIToolChoice? ToolChoice { get; set; } = new TogetherAIAutoToolChoice();
+
+    /// <summary>
+    /// An object specifying the format that the model must output.
+    /// Accepted value: json_object.
+    /// </summary>
+    [JsonPropertyName("response_format")]
+    public TogetherAIResponseFormat? ResponseFormat { get; set; }
 }
 
 public record TogetherAIEmbeddingsRequestArgs

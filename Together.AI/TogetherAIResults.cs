@@ -25,7 +25,7 @@ public record TogetherAIResult
     public long? NumReturns { get; set; }
 
     [JsonPropertyName("args")]
-    public TogetherAIArgs? Args { get; set; }
+    public TogetherAIRequestArgs? Args { get; set; }
 
     [JsonPropertyName("subjobs")]
     public object[]? Subjobs { get; set; }
@@ -47,6 +47,7 @@ public record TogetherAIStreamResult
     public string? ResultType { get; set; }
 }
 
+[Obsolete("Represents the legacy 'choice' result, please use the newer implementation.")]
 public record TogetherAIOutput
 {
     [JsonPropertyName("choices")]
@@ -59,14 +60,23 @@ public record TogetherAIOutput
     public string? ResultType { get; set; }
 }
 
-public record TogetherAIChoiceItem
+public record TogetherAICompletionChoice
 {
     [JsonPropertyName("text")]
     public string? Text { get; set; }
 }
 
+public record TogetherAIChatCompletionChoice
+{
+    /// <summary>
+    /// The generated message
+    /// </summary>
+    [JsonPropertyName("message")]
+    public TogetherAIChatMessage? Message { get; set; }
+}
+
 [Obsolete("Represents the legacy 'choice' result, please use the newer implementation.")]
-public record TogetherAIChoice : TogetherAIChoiceItem
+public record TogetherAIChoice : TogetherAICompletionChoice
 {
     [JsonPropertyName("index")]
     public long? Index { get; set; }
@@ -87,7 +97,7 @@ public record TogetherAIUsage
     public int? TotalTokens { get; set; }
 }
 
-public record TogetherAICompletionResult
+public record TogetherAIResultDetails
 {
     [JsonPropertyName("id")]
     public string? Id { get; set; }
@@ -101,11 +111,20 @@ public record TogetherAICompletionResult
     [JsonPropertyName("object")]
     public string? Object { get; set; }
 
-    [JsonPropertyName("choices")]
-    public TogetherAIChoiceItem[]? Choices { get; set; }
-
     [JsonPropertyName("usage")]
     public TogetherAIUsage? Usage { get; set; }
+}
+
+public record TogetherAICompletionResult : TogetherAIResultDetails
+{
+    [JsonPropertyName("choices")]
+    public TogetherAICompletionChoice[]? Choices { get; set; }
+}
+
+public record TogetherAIChatCompletionResult : TogetherAIResultDetails
+{
+    [JsonPropertyName("choices")]
+    public TogetherAIChatCompletionChoice[]? Choices { get; set; }
 }
 
 public record TogetherAIEmbeddingsResult
