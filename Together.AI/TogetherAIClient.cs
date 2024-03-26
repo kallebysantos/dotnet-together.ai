@@ -131,6 +131,29 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         return await response.Content.ReadFromJsonAsync<TogetherAICompletionResult>(cancellationToken);
     }
 
+    /// <summary>
+    /// Method for chat and moderation models on Together AI
+    /// </summary>
+    public async Task<TogetherAIChatCompletionResult?> GetChatCompletionsAsync(
+        TogetherAIChatCompletionArgs requestArgs,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var streamRequestArgs = requestArgs with
+        {
+            Stream = false
+        };
+
+        using var response = await GetChatCompletionResponseAsync(
+            requestArgs: streamRequestArgs,
+            cancellationToken
+        );
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<TogetherAIChatCompletionResult>(cancellationToken);
+    }
+
     public async Task<TogetherAIEmbeddingsResult?> GetEmbeddingsAsync(
         TogetherAIEmbeddingsRequestArgs requestArgs,
         CancellationToken cancellationToken = default
