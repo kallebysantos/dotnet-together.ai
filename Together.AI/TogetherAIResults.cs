@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Together.AI;
@@ -68,11 +70,74 @@ public record TogetherAICompletionChoice
 
 public record TogetherAIChatCompletionChoice
 {
+    public static string ToolCallFinishReason = "tool_calls";
+
+    [JsonPropertyName("finish_reason")]
+    public string? FinishReason { get; set; }
+
+    /// <summary>
+    /// Number of top-k logprobs to return
+    /// </summary>
+    [JsonPropertyName("logprobs")]
+    public long? Logprobs { get; set; }
+
+    [JsonPropertyName("index")]
+    public long? Index { get; set; }
+
     /// <summary>
     /// The generated message
     /// </summary>
     [JsonPropertyName("message")]
-    public TogetherAIChatMessage? Message { get; set; }
+    public TogetherAIChatMessageResult? Message { get; set; }
+}
+
+public record TogetherAIChatMessageResult : TogetherAIChatMessage
+{
+    [JsonPropertyName("tool_calls")]
+    public TogetherAIToolCall[]? ToolCalls { get; set; }
+}
+
+public record TogetherAIToolCall
+{
+    /// <summary>
+    /// The generated call Id
+    /// </summary>
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    /// <summary>
+    /// The generated call type
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; set; } = TogetherAIToolCallFunction.TypeName;
+
+    /// <summary>
+    /// The function to be called. 
+    /// </summary>
+    [JsonPropertyName("function")]
+    public TogetherAIToolCallFunction? Function { get; set; }
+}
+
+public record TogetherAIToolCallFunction
+{
+    public static string TypeName = "function";
+
+    /// <summary>
+    /// The name of the function to be called. 
+    /// </summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// The arguments of the function to be called. 
+    /// </summary>
+    [JsonPropertyName("arguments")]
+    public string? Arguments { get; set; }
+
+    public IDictionary<string, object>? GetArguments
+        => Arguments is null
+            ? default
+            : JsonSerializer.Deserialize<Dictionary<string, object>?>(Arguments);
 }
 
 [Obsolete("Represents the legacy 'choice' result, please use the newer implementation.")]
