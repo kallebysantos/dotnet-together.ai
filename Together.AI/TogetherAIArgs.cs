@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Together.AI;
@@ -125,34 +126,108 @@ public record TogetherAICompletionArgs : TogetherAIStreamArgs
     public string? Prompt { get; set; }
 }
 
-public record TogetherAIChatMessage
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "role")]
+[JsonDerivedType(typeof(TogetherAIChatSystemMessage), typeDiscriminator: "system")]
+[JsonDerivedType(typeof(TogetherAIChatUserMessage), typeDiscriminator: "user")]
+[JsonDerivedType(typeof(TogetherAIChatAssistantMessage), typeDiscriminator: "assistant")]
+[JsonDerivedType(typeof(TogetherAIChatToolCallMessage), typeDiscriminator: "tool")]
+public abstract record TogetherAIChatMessage
+{
+    /// <summary>
+    /// The role of the messages author. Choice between: system, user, or assistant
+    /// </summary>
+    [JsonIgnore]
+    public string? Role { get; protected set; }
+
+    /// <summary>
+    /// The contents of the message.
+    /// </summary>
+    [JsonPropertyName("content")]
+    public string? Content { get; protected set; }
+}
+
+public record TogetherAIChatUserMessage : TogetherAIChatMessage
+{
+    /// <summary>
+    /// Represent the user role of the message
+    /// </summary>
+    public static string UserRole = "user";
+
+    public TogetherAIChatUserMessage(string Content)
+    {
+        base.Role = UserRole;
+        base.Content = Content;
+    }
+}
+
+public record TogetherAIChatSystemMessage : TogetherAIChatMessage
 {
     /// <summary>
     /// Represent the system role of the message
     /// </summary>
     public static string SystemRole = "system";
 
-    /// <summary>
-    /// Represent the user role of the message
-    /// </summary>
-    public static string UserRole = "user";
+    public TogetherAIChatSystemMessage(string Content)
+    {
+        base.Role = SystemRole;
+        base.Content = Content;
+    }
+}
 
+public record TogetherAIChatAssistantMessage : TogetherAIChatMessage
+{
     /// <summary>
     /// Represent the assistant role of the message
     /// </summary>
     public static string AssistantRole = "assistant";
 
+    public TogetherAIChatAssistantMessage(string Content)
+    {
+        base.Role = AssistantRole;
+        base.Content = Content;
+    }
+}
+
+public record TogetherAIChatToolCallMessage : TogetherAIChatMessage
+{
     /// <summary>
-    /// The role of the messages author. Choice between: system, user, or assistant
+    /// Represent the tool role of the message
     /// </summary>
-    [JsonPropertyName("role")]
-    public string Role { get; set; } = UserRole;
+    public static string ToolRole = "tool";
 
     /// <summary>
-    /// The contents of the message.
+    /// The generated call Id
     /// </summary>
-    [JsonPropertyName("content")]
-    public string? Content { get; set; }
+    [JsonPropertyName("tool_call_id")]
+    public string? Id { get; protected set; }
+
+    /// <summary>
+    /// The name of the called function. 
+    /// </summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; protected set; }
+
+    public TogetherAIChatToolCallMessage(string Id, string FunctionName, object FunctionResponse)
+    {
+        this.Id = Id;
+        this.Name = FunctionName;
+        base.Role = ToolRole;
+        base.Content = FunctionResponse.ToString();
+    }
+
+    public static TogetherAIChatToolCallMessage FromToolCall(TogetherAIToolCall toolCall, object functionResponse)
+        => new
+        (
+            Id: toolCall.Id ?? throw new ArgumentNullException("The given tool call don't have a call Id"),
+            FunctionName: toolCall.Function?.Name ?? throw new ArgumentNullException("The given tool call don't have a function name"),
+            FunctionResponse: JsonSerializer.Serialize(
+                value: functionResponse,
+                options: new JsonSerializerOptions(JsonSerializerDefaults.Web)
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.WriteAsString
+                }
+            )
+        );
 }
 
 public record TogetherAITool
@@ -257,7 +332,7 @@ public record TogetherAIChatCompletionArgs : TogetherAIStreamArgs
     /// Use this to provide a list of functions the model may generate JSON inputs for.
     /// </summary>
     [JsonPropertyName("tools")]
-    public IEnumerable<TogetherAITool>? Tools { get; set; } = new List<TogetherAITool>();
+    public IEnumerable<TogetherAITool>? Tools { get; set; }
 
     /// <summary>
     /// Controls which (if any) function is called by the model. auto means the model can pick
@@ -266,7 +341,7 @@ public record TogetherAIChatCompletionArgs : TogetherAIStreamArgs
     /// that function. auto is the default.
     /// </summary>
     [JsonPropertyName("tool_choice")]
-    public ITogetherAIToolChoice? ToolChoice { get; set; } = new TogetherAIAutoToolChoice();
+    public ITogetherAIToolChoice? ToolChoice { get; set; }
 
     /// <summary>
     /// An object specifying the format that the model must output.

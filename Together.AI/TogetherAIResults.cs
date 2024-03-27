@@ -71,6 +71,7 @@ public record TogetherAICompletionChoice
 public record TogetherAIChatCompletionChoice
 {
     public static string ToolCallFinishReason = "tool_calls";
+    public static string EndOfStreamFinishReason = "eos";
 
     [JsonPropertyName("finish_reason")]
     public string? FinishReason { get; set; }
@@ -91,8 +92,20 @@ public record TogetherAIChatCompletionChoice
     public TogetherAIChatMessageResult? Message { get; set; }
 }
 
-public record TogetherAIChatMessageResult : TogetherAIChatMessage
+public record TogetherAIChatMessageResult
 {
+    /// <summary>
+    /// The role of the messages author. Choice between: system, user, or assistant
+    /// </summary>
+    [JsonPropertyName("role")]
+    public string? Role { get; set; }
+
+    /// <summary>
+    /// The contents of the message.
+    /// </summary>
+    [JsonPropertyName("content")]
+    public string? Content { get; set; }
+
     [JsonPropertyName("tool_calls")]
     public TogetherAIToolCall[]? ToolCalls { get; set; }
 }

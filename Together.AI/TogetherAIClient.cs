@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +14,11 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
 {
     private readonly HttpClient _httpClient = httpClient;
 
+    public JsonSerializerOptions GetJsonSerializerOptions => new(JsonSerializerDefaults.Web)
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+    };
+
     [Obsolete("This method uses the legacy 'inference' endpoint, please use the newer implementation.")]
     public async Task<HttpResponseMessage> GetInferenceResponseAsync(
         TogetherAIRequestArgs requestArgs,
@@ -20,6 +27,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         await _httpClient.PostAsJsonAsync(
             requestUri: "/inference",
             value: requestArgs,
+            options: GetJsonSerializerOptions,
             cancellationToken
         );
 
@@ -30,6 +38,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         await _httpClient.PostAsJsonAsync(
             requestUri: "/v1/completions",
             value: requestArgs,
+            options: GetJsonSerializerOptions,
             cancellationToken
         );
 
@@ -40,6 +49,7 @@ public class TogetherAIClient(HttpClient httpClient) : IDisposable
         await _httpClient.PostAsJsonAsync(
             requestUri: "/v1/chat/completions",
             value: requestArgs,
+            options: GetJsonSerializerOptions,
             cancellationToken
         );
 
