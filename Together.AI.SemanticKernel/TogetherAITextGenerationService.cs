@@ -20,7 +20,7 @@ public class TogetherAITextGenerationService(TogetherAIClient TogetherAI, string
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        var completionStream = TogetherAI.GetCompletionStreamAsync(
+        var completionStream = TogetherAI.GetCompletionsStreamAsync(
             requestArgs: PrepareArgs(prompt, executionSettings),
             cancellationToken
         );
@@ -40,19 +40,19 @@ public class TogetherAITextGenerationService(TogetherAIClient TogetherAI, string
         CancellationToken cancellationToken = default
     )
     {
-        var completion = await TogetherAI.GetCompletionAsync(
+        var completion = await TogetherAI.GetCompletionsAsync(
             requestArgs: PrepareArgs(prompt, executionSettings),
             cancellationToken
         );
 
-        var textResult = completion?.Output?.Choices.First()?.Text ?? string.Empty;
+        var textResult = completion?.Choices.First()?.Text ?? string.Empty;
 
         return [new(textResult)];
     }
 
-    protected TogetherAIRequestArgs PrepareArgs(string prompt, PromptExecutionSettings? executionSettings = null)
+    protected TogetherAICompletionArgs PrepareArgs(string prompt, PromptExecutionSettings? executionSettings = null)
     {
-        var requestArgs = executionSettings?.ToTogetherArgs() ?? new TogetherAIRequestArgs();
+        var requestArgs = executionSettings?.ToTogetherCompletionArgs() ?? new TogetherAICompletionArgs();
 
         return requestArgs with
         {

@@ -59,15 +59,15 @@ public static class TogetherAISemanticKernelExtensions
             serviceId: serviceId
         );
 
-    public static TogetherAIRequestArgs ToTogetherArgs(this PromptExecutionSettings promptSettings)
+    public static TogetherAICompletionArgs ToTogetherCompletionArgs(this PromptExecutionSettings promptSettings)
     {
         var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         var extensionDataJson = JsonSerializer.Serialize(promptSettings, options: jsonOptions);
 
         var togetherAIArgs =
-            JsonSerializer.Deserialize<TogetherAIRequestArgs>(extensionDataJson, options: jsonOptions)
+            JsonSerializer.Deserialize<TogetherAICompletionArgs>(extensionDataJson, options: jsonOptions)
             ?? throw new ArgumentException(
-                message: $"Cannot convert to {nameof(TogetherAIRequestArgs)}",
+                message: $"Cannot convert to {nameof(TogetherAICompletionArgs)}",
                 paramName: nameof(PromptExecutionSettings)
             );
 

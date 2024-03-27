@@ -1,12 +1,10 @@
 <Project>
     <PropertyGroup Label="Compiler properties">
-        <LangVersion>default</LangVersion>
+        <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Label="Package/Assembly Manifest Properties">
-        <Version>1.2.0</Version>
-
         <Authors>Kalleby Santos</Authors>
         <Company>kallebysantos</Company>
         <Product>$(MSBuildProjectName)</Product>
