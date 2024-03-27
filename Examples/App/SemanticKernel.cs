@@ -1,12 +1,12 @@
 using System.Reflection;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
-
 using Together.AI.SemanticKernel;
 
 public static class SemanticKernelExample
 {
-    public static async Task RunExample(string apiKey, string? modelId = null)
+    public static async Task RunLoadingExternalPromptExample(string apiKey, string? modelId = null)
     {
 
         var kernel = Kernel.CreateBuilder()
@@ -32,6 +32,33 @@ public static class SemanticKernelExample
         await foreach (var completion in completionStream)
         {
             Console.Write(completion);
+        }
+    }
+
+    public static async Task RunChatExample(string apiKey, string? modelId = null)
+    {
+        var kernelBuilder = Kernel.CreateBuilder()
+            .AddTogetherAIChatCompletion(apiKey, modelId);
+
+        var kernel = kernelBuilder.Build();
+
+        var chat = kernel.GetRequiredService<IChatCompletionService>();
+
+        var history = new ChatHistory();
+
+        Console.Write("User: ");
+        string? userInput;
+        while ((userInput = Console.ReadLine()) != null)
+        {
+            history.AddUserMessage(userInput);
+
+            var result = await chat.GetChatMessageContentAsync(history);
+
+            Console.WriteLine("Assistant: " + result);
+
+            history.AddMessage(result.Role, result.Content ?? string.Empty);
+
+            Console.Write("User: ");
         }
     }
 }

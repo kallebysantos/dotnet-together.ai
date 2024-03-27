@@ -52,12 +52,12 @@ public class TogetherAITextGenerationService(TogetherAIClient TogetherAI, string
 
     protected TogetherAICompletionArgs PrepareArgs(string prompt, PromptExecutionSettings? executionSettings = null)
     {
-        var requestArgs = executionSettings?.ToTogetherCompletionArgs() ?? new TogetherAICompletionArgs();
+        var modelArgs = executionSettings?.ToTogetherModelArgs() ?? new TogetherAIModelArgs();
 
-        return requestArgs with
+        return (TogetherAICompletionArgs)modelArgs with
         {
             Prompt = prompt,
-            Model = requestArgs.Model ?? ModelId
+            Model = modelArgs.Model ?? ModelId
                 ?? throw new ArgumentNullException(nameof(ModelId),
                     $"No model supplied: {nameof(TogetherAITextGenerationService)} requires a valid model."
                 ),

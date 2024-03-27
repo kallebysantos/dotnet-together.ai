@@ -105,6 +105,9 @@ public record TogetherAIStreamArgs : TogetherAIModelArgs
     /// </summary>
     [JsonPropertyName("stream")]
     public bool Stream { get; set; } = false;
+
+    public TogetherAIStreamArgs() { }
+    public TogetherAIStreamArgs(TogetherAIModelArgs modelArgs) : base(original: modelArgs) { }
 }
 
 [Obsolete("Represents the legacy 'inference' endpoint request, please use the newer implementation.")]
@@ -115,6 +118,9 @@ public record TogetherAIRequestArgs : TogetherAIStreamArgs
     /// </summary>
     [JsonPropertyName("prompt")]
     public string? Prompt { get; set; }
+
+    public TogetherAIRequestArgs() { }
+    public TogetherAIRequestArgs(TogetherAIModelArgs modelArgs) : base(modelArgs) { }
 }
 
 public record TogetherAICompletionArgs : TogetherAIStreamArgs
@@ -124,6 +130,9 @@ public record TogetherAICompletionArgs : TogetherAIStreamArgs
     /// </summary>
     [JsonPropertyName("prompt")]
     public string? Prompt { get; set; }
+
+    public TogetherAICompletionArgs() { }
+    public TogetherAICompletionArgs(TogetherAIModelArgs modelArgs) : base(modelArgs) { }
 }
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "role")]
@@ -144,8 +153,8 @@ public abstract record TogetherAIChatMessage
     /// </summary>
     [JsonPropertyName("content")]
     public string? Content { get; protected set; }
-}
 
+}
 public record TogetherAIChatUserMessage : TogetherAIChatMessage
 {
     /// <summary>
@@ -349,6 +358,9 @@ public record TogetherAIChatCompletionArgs : TogetherAIStreamArgs
     /// </summary>
     [JsonPropertyName("response_format")]
     public TogetherAIResponseFormat? ResponseFormat { get; set; }
+
+    public TogetherAIChatCompletionArgs() { }
+    public TogetherAIChatCompletionArgs(TogetherAIModelArgs modelArgs) : base(modelArgs) { }
 }
 
 public record TogetherAIEmbeddingsRequestArgs
