@@ -52,7 +52,7 @@ var togetherAI = new TogetherAIClient(client);
 
 ### Getting completion results
 
-To simply get text completion results, you can use the [`GetCompletionsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L104) method.
+To simply get text completion results, you can use the [`GetCompletionsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L124) method.
 
 
 ```cs Snippet:GettingCompletionResults
@@ -76,7 +76,7 @@ Console.WriteLine(result?.Choices?.First().Text);
 
 ### Streaming tokens
 
-To get tokens as the model generates, you can use the [`GetCompletionsStreamAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L58) method.
+To get tokens as the model generates, you can use the [`GetCompletionsStreamAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L78) method.
 
 ```cs Snippet:StreamingTokens
 using Together.AI;
@@ -101,7 +101,7 @@ await foreach (var streamResult in togetherAI.GetCompletionsStreamAsync(together
 
 ### Getting embeddings
 
-To simply get text embedding results, you can use the [`GetEmbeddingsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L65) method.
+To simply get text embedding results, you can use the [`GetEmbeddingsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L167) method.
 
 ```cs Snippet:GettingEmbeddings
 using Together.AI;
@@ -124,6 +124,51 @@ foreach (var token in result?.Data?.First()?.Values ?? [])
     Console.Write(token);
 }
 ```
+
+### Getting chat completions
+
+To simply get chat completion results, you can use the [`GetChatCompletionsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L147) method.
+
+
+```cs Snippet:GettingChatCompletion
+using Together.AI;
+
+// ...
+
+// Creating a message history
+var messages = new List<TogetherAIChatMessage>() {
+    new TogetherAIChatSystemMessage("You are a helpful travel agent."),
+    new TogetherAIChatUserMessage("Tell me about San Francisco.")
+};
+
+// Setup Request Arguments
+var togetherAIArgs = new TogetherAIChatCompletionArgs
+{
+    Model = "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    Messages = messages,
+    MaxTokens = 512,
+    Stop = new string[]{
+        "</s>",
+        "[/INST]"
+    },
+};
+
+var result = await togetherAI.GetChatCompletionsAsync(chatArgs);
+
+if (result?.Choices?.FirstOrDefault()?.Message?.Content is string content)
+{
+    messages.Add(new TogetherAIChatAssistantMessage(content));
+}
+
+// Printing out the chat results
+messages.ForEach(Console.WriteLine);
+
+```
+
+#### Function calling
+
+The [`GetChatCompletionsAsync`](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Together.AI/TogetherAIClient.cs#L147)
+method, can also be used to function calling. Like the following [Example](https://github.com/kallebysantos/dotnet-together.ai/blob/master/Examples/App/TogetherClient.cs#L144)
 
 ## Examples
 
