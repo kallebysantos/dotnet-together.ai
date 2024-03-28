@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
@@ -31,15 +30,10 @@ public class TogetherAIChatCompletionService(TogetherAIClient TogetherAI, string
             requestArgs = ConfigureTools(kernel, requestArgs);
         }
 
-        Console.WriteLine(JsonSerializer.Serialize(requestArgs, options: new() { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault }));
-
         var completion = await TogetherAI.GetChatCompletionsAsync(
                 requestArgs: requestArgs,
                 cancellationToken
         );
-
-        Console.WriteLine("------------------COMPLETION------------------");
-        Console.WriteLine(JsonSerializer.Serialize(completion, options: new() { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault }));
 
         if (completion is null || !completion.Choices.Any())
             throw new KernelException("Chat completions not found");
@@ -72,29 +66,54 @@ public class TogetherAIChatCompletionService(TogetherAIClient TogetherAI, string
             return parsedResult is not null ? new[] { parsedResult } : [];
         }
 
-        throw new NotImplementedException();
-
-        /*
         // We must send back a response for every tool call, regardless of whether we successfully executed it or not.
         // If we successfully execute it, we'll add the result. If we don't, we'll add an error.
         foreach (var toolCall in toolCalls)
         {
-            kernel.Plugins.TryGetFunction()
+            if (toolCall.Function?.Name is null)
+                continue;
 
-            if (toolCall.Function?.Name == nameof(GetCurrentWeather))
+            // Find the function in the kernel and populate the arguments.
+            if (!kernel.Plugins.TryGetFunction(
+                    pluginName: toolCall.Function.Name.Split(':').FirstOrDefault(),
+                    functionName: toolCall.Function.Name.Split(':').LastOrDefault(),
+                    out var kernelFunction
+            ))
             {
-                var location = toolCall.Function.GetArguments?
-                    .FirstOrDefault(arg => arg.Key == "location").Value.ToString()
-                    ?? string.Empty;
-
-                // Adding the tool call result in the message history
-                messages.Add(TogetherAIChatToolCallMessage.FromToolCall(
-                    toolCall: toolCall,
-                    functionResponse: GetCurrentWeather(location)
-                ));
+                continue;
             }
+
+            var kernelFunctionArguments = toolCall.Function.GetArguments is not null
+                ? new KernelArguments(toolCall.Function.GetArguments!)
+                : null;
+
+            // Now we Invoke the function and append the result in the chat history
+            var functionResult = await kernelFunction.InvokeAsync(kernel, kernelFunctionArguments);
+
+            var toolCallMessage = TogetherAIChatToolCallMessage.FromToolCall(
+                    toolCall: toolCall,
+                    functionResponse: functionResult.GetValue<object?>() ?? string.Empty
+                );
+
+            chatHistory.Add(toolCallMessage.ToKernelMessage());
         }
-        */
+
+        // Then we recreate the request arguments with the updated history
+        var enrichedRequestArgs = PrepareArgs(chatHistory, executionSettings);
+
+        // Now we get a enriched completion with all functions results as context
+        var enrichedCompletion = await TogetherAI.GetChatCompletionsAsync(
+                requestArgs: enrichedRequestArgs,
+                cancellationToken
+        );
+
+        if (enrichedCompletion is null || !enrichedCompletion.Choices.Any())
+            throw new KernelException("Chat completions not found");
+
+        return enrichedCompletion.Choices
+            .Where(chatChoice => chatChoice.Message is not null)
+            .Select(chatChoice => chatChoice.Message!.ToKernelMessage())
+            .ToList();
     }
 
     public IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(

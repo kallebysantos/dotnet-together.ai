@@ -7,7 +7,6 @@ using Microsoft.SemanticKernel.TextGeneration;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace Together.AI.SemanticKernel;
 
