@@ -7,6 +7,7 @@ using Microsoft.SemanticKernel.TextGeneration;
 using Microsoft.SemanticKernel.ChatCompletion;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Together.AI.SemanticKernel;
 
@@ -197,4 +198,41 @@ public static class TogetherAISemanticKernelExtensions
                  ),
          _ => throw new InvalidCastException("Could not convert from given message")
      };
+
+    public static TogetherAIFunctionTool ToTogetherFunction(this KernelFunctionMetadata kernelFunction)
+    {
+        var function = new TogetherAIFunctionTool
+        {
+            Name = $"{kernelFunction.PluginName}::{kernelFunction.Name}",
+            Description = kernelFunction.Description,
+        };
+
+        if (kernelFunction.Parameters.Any())
+        {
+            var properties = kernelFunction.Parameters.ToDictionary(
+                keySelector: metadata => metadata.Name,
+                elementSelector: metadata => new
+                {
+                    type = metadata.ParameterType?.Name.ToLower(),
+                    description = metadata.Description,
+                }
+            );
+
+            var requiredProperties = kernelFunction.Parameters
+                .Where(param => param.IsRequired)
+                .Select(param => param.Name);
+
+            function = function with
+            {
+                Parameters = new Dictionary<string, object>()
+                {
+                    {"type", "object"},
+                    {"properties", properties},
+                    {"required", requiredProperties},
+                }
+            };
+        }
+
+        return function;
+    }
 }
