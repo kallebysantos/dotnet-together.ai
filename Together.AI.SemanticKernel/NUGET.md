@@ -69,3 +69,5 @@ Console.WriteLine(result);
 
 // Result: 'Y'
 ```
+
+> More examples can be found in the [`Examples folder`](https://github.com/kallebysantos/dotnet-together.ai/tree/master/Examples)
